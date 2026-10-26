@@ -130,22 +130,72 @@
       gap: 4px;
     }
 
-    /* Professional Synchronized Green Stock Bar */
-    .pro-stock-bar {
+    /* Golden Prime Enticement Hook (High Visibility Focal Point) */
+    .prime-golden-hook {
+      background: linear-gradient(135deg, #fffdf5 0%, #fef3c7 100%);
+      border: 1.5px solid #f59e0b;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      text-align: left;
+      box-shadow: 0 3px 12px rgba(245, 158, 11, 0.12);
+    }
+
+    .prime-golden-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #92400e;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .prime-golden-sub {
+      font-size: 12.5px;
+      color: #78350f;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Product Visual Hero Section with Unified Top Stock Bar */
+    .product-visual {
+      text-align: center;
+      margin: 14px 0 20px 0;
+      position: relative;
+    }
+
+    .img-card-unified {
+      background: #ffffff;
+      border: 1.5px solid #10b981;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.15);
+      display: inline-block;
+      width: 100%;
+      max-width: 520px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin: 0 auto;
+    }
+
+    .img-card-unified:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(16, 185, 129, 0.22);
+    }
+
+    .pro-stock-bar-attached {
       background: linear-gradient(90deg, #059669 0%, #10b981 100%);
       color: #ffffff;
-      padding: 9px 14px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
+      padding: 10px 16px;
+      font-size: 12.5px;
+      font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 12px 0 16px 0;
-      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+      letter-spacing: 0.2px;
     }
 
-    .pro-stock-bar .dot {
+    .pro-stock-bar-attached .dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
@@ -155,44 +205,33 @@
       animation: pulseGreen 1.8s infinite;
     }
 
-    @keyframes pulseGreen {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.25); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.8; }
+    .stock-pill {
+      background: rgba(0, 0, 0, 0.22);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
-    /* Product Visual Hero Section */
-    .product-visual {
-      text-align: center;
-      margin: 14px 0 20px 0;
-      position: relative;
-    }
-
-    .img-wrapper {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
+    .img-frame {
       padding: 16px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-      display: inline-block;
-      width: 100%;
-      max-width: 520px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: #ffffff;
+      text-align: center;
     }
 
-    .img-wrapper:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    .product-visual img {
+    .img-frame img {
       max-width: 100%;
       height: 290px;
       object-fit: contain;
-      border-radius: 8px;
-      background: #ffffff;
       display: block;
       margin: 0 auto;
+      transition: transform 0.2s ease;
+    }
+
+    .img-frame img:hover {
+      transform: scale(1.02);
     }
 
     /* Animated Trend Ribbon & Rating Ticker */
@@ -466,24 +505,36 @@
         </span>
       </div>
 
-      <!-- Professional Synchronized Green Stock Bar -->
-      <div class="pro-stock-bar">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="dot"></span>
-          <span>Verified Amazon US Stock &middot; Official Supplier Warehouse</span>
+      <!-- Golden Prime Enticement Hook (High Visibility Focal Point) -->
+      <div class="prime-golden-hook">
+        <div class="prime-golden-title">
+          <span>🎁</span>
+          <span>Claim Your 30-Day Amazon Prime™ Full Benefits 100% FREE</span>
         </div>
-        <span style="background:rgba(0,0,0,0.18);padding:2px 8px;border-radius:4px;font-size:10px;text-transform:uppercase;">
-          Ready to Ship
-        </span>
+        <p class="prime-golden-sub">
+          Enjoy Instant <strong>FREE Same-Day &amp; 2-Day Delivery</strong> on this order + Exclusive Member Discounts with Zero Risk &amp; Cancel Anytime.
+        </p>
       </div>
 
-      <!-- Product Visual Hero Image Section -->
+      <!-- Product Visual Hero Image Section with Unified Top Stock Bar -->
       
       <div class="product-visual">
-        <div class="img-wrapper">
-          <a href="https://ergodesklab.org/reviews/lumbar-cushion-review/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist" target="_blank" rel="nofollow noopener" id="product-img-link" title="Click to view live on Amazon US">
-            <img src="https://m.media-amazon.com/images/I/81s0zVmQvcL._AC_SL1500_.jpg" alt="Everlasting Comfort Memory Foam Lumbar Support Review" id="main-product-img">
-          </a>
+        <div class="img-card-unified">
+          <!-- Directly Attached Professional Green Stock Bar -->
+          <div class="pro-stock-bar-attached">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="dot"></span>
+              <span>Verified Amazon US Stock &middot; Official Supplier Warehouse</span>
+            </div>
+            <span class="stock-pill">READY TO SHIP</span>
+          </div>
+
+          <!-- Image Frame -->
+          <div class="img-frame">
+            <a href="https://www.amazon.com/dp/B01IJNJAZ0/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist" target="_blank" rel="nofollow noopener" id="product-img-link" title="Click to view live on Amazon US">
+              <img src="https://m.media-amazon.com/images/I/81s0zVmQvcL._AC_SL1500_.jpg" alt="Everlasting Comfort Memory Foam Lumbar Support Review" id="main-product-img">
+            </a>
+          </div>
         </div>
 
         <!-- Interactive Amazon View Gallery Selector -->
@@ -558,7 +609,7 @@
 
       <!-- High-Impact CTA Section -->
       <div class="cta-box">
-        <a href="https://ergodesklab.org/reviews/lumbar-cushion-review/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist" class="cta-btn" id="main-cta-btn" target="_blank" rel="nofollow noopener">
+        <a href="https://www.amazon.com/dp/B01IJNJAZ0/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist" class="cta-btn" id="main-cta-btn" target="_blank" rel="nofollow noopener">
           👉 Check Availability on Amazon US
         </a>
         <div class="pricing-sub">
@@ -598,7 +649,7 @@
           if (timerDisplay) timerDisplay.innerText = sec + 's';
           if (sec <= 0) {
             clearInterval(interval);
-            window.location.href = "https://ergodesklab.org/reviews/lumbar-cushion-review/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist";
+            window.location.href = "https://www.amazon.com/dp/B01IJNJAZ0/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist";
           }
         }, 1000);
       }
