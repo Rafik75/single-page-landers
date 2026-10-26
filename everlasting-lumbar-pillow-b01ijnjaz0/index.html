@@ -27,6 +27,12 @@
     🇺🇸 Verified US Consumer Deal &middot; Live Stock Updated for October 26, 2026
   </header>
 
+  <!-- 4-Second Auto-Redirect Banner (Triggered by ?k4m) -->
+  <div id="redirect-banner" class="hidden bg-amber-400 text-slate-950 px-4 py-2.5 text-center text-xs sm:text-sm font-extrabold items-center justify-center gap-2 shadow-md">
+    <span>⚡ Connecting you to verified Amazon US stock & live deal...</span>
+    <span id="timer-count" class="bg-slate-950 text-amber-300 font-mono px-2 py-0.5 rounded text-xs">4s</span>
+  </div>
+
   <!-- Main Content Container -->
   <main class="max-w-3xl mx-auto px-4 py-8 sm:py-12 w-full">
     
@@ -67,6 +73,34 @@
         <span class="text-2xl sm:text-3xl font-black text-emerald-700">$39.99</span>
       </div>
     </div>
+
+    
+    <!-- Product Visual Hero Image Section -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 mb-8 shadow-sm text-center overflow-hidden">
+      <div class="relative inline-block max-w-full">
+        <a href="https://www.amazon.com/dp/B01IJNJAZ0?tag=prismeia-tw-20" target="_blank" rel="nofollow noopener">
+          <img src="https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="Everlasting Comfort Memory Foam Lumbar Support Review" 
+               class="max-h-72 sm:max-h-96 mx-auto rounded-xl object-contain transition-transform duration-300 hover:scale-105">
+        </a>
+      </div>
+      
+      <!-- Prime Promo & Stock Urgency Ribbon -->
+      <div class="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+        <div class="flex items-center gap-1.5 font-bold text-slate-800">
+          <span class="text-amber-500 font-black">★★★★★</span>
+          <span>4.6 / 5.0 (47,000+ Reviews)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full text-xs">
+            ✔ Verified In Stock
+          </span>
+          <span class="bg-sky-100 text-sky-800 font-bold px-2.5 py-0.5 rounded-full text-xs">
+            📦 Prime 2-Day Shipping
+          </span>
+        </div>
+      </div>
+    </div>
+    
 
     <!-- Editorial Intro Hook -->
     <div class="prose prose-slate max-w-none text-base sm:text-lg text-slate-700 leading-relaxed mb-8">
@@ -109,7 +143,7 @@
 
     <!-- High-Impact CTA Section -->
     <div class="text-center py-6">
-      <a href="https://ergodesklab.org/reviews/lumbar-cushion-review/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist" target="_blank" rel="nofollow noopener" 
+      <a href="https://www.amazon.com/dp/B01IJNJAZ0?tag=prismeia-tw-20" target="_blank" rel="nofollow noopener" 
          class="amazon-btn-gradient block sm:inline-block w-full sm:w-auto text-slate-950 font-extrabold text-base sm:text-lg py-4 px-10 rounded-xl transition-transform hover:-translate-y-0.5 uppercase tracking-wide">
         Check Availability on Amazon US &rarr;
       </a>
@@ -135,5 +169,26 @@
     </div>
   </footer>
 
+  <!-- 4-Second Auto-Redirect Script -->
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('k4m') || urlParams.has('k4')) {
+      const banner = document.getElementById('redirect-banner');
+      const timerDisplay = document.getElementById('timer-count');
+      if (banner) {
+        banner.classList.remove('hidden');
+        banner.classList.add('flex');
+        let sec = 4;
+        const timer = setInterval(() => {
+          sec--;
+          if (timerDisplay) timerDisplay.innerText = sec + 's';
+          if (sec <= 0) {
+            clearInterval(timer);
+            window.location.href = "https://www.amazon.com/dp/B01IJNJAZ0?tag=prismeia-tw-20";
+          }
+        }, 1000);
+      }
+    }
+  </script>
 </body>
 </html>
