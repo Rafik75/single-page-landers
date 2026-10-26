@@ -5,190 +5,586 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Everlasting Comfort Memory Foam Lumbar Support Review</title>
   <meta name="description" content="Chronic lower back stiffness is one of the leading workday complaints...">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .amazon-btn-gradient {
-      background: linear-gradient(180deg, #FF9900 0%, #E67A00 100%);
-      box-shadow: 0 4px 14px rgba(230, 122, 0, 0.35);
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --amazon-orange: #ff9900;
+      --amazon-btn: #ffd814;
+      --amazon-btn-hover: #f7ca00;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-dark: #0f172a;
+      --text-muted: #475569;
+      --border: #e2e8f0;
+      --green: #16a34a;
+      --green-dark: #059669;
+      --green-light: #f0fdf4;
     }
-    .amazon-btn-gradient:hover {
-      background: linear-gradient(180deg, #FA8900 0%, #D46F00 100%);
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding: 16px 12px;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+      overflow: hidden;
+    }
+
+    /* Top Editorial Header */
+    .top-bar {
+      background: #1e293b;
+      color: #ffffff;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-bar span.badge {
+      background: var(--green-dark);
+      color: #ffffff;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* 4-Second Auto-Redirect Banner (Triggered by ?k4m) */
+    .redirect-notice {
+      display: none;
+      background: #fef3c7;
+      border-bottom: 1px solid #fde68a;
+      color: #92400e;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .redirect-notice .timer {
+      background: #92400e;
+      color: #ffffff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    .content {
+      padding: 24px;
+    }
+
+    .headline {
+      font-size: 23px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+
+    .meta-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .stars {
+      color: #f59e0b;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .stock-green-text {
+      color: var(--green);
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Professional Synchronized Green Stock Bar */
+    .pro-stock-bar {
+      background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+      color: #ffffff;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 12px 0 16px 0;
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+    }
+
+    .pro-stock-bar .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #6ee7b7;
+      display: inline-block;
+      box-shadow: 0 0 6px #6ee7b7;
+      animation: pulseGreen 1.8s infinite;
+    }
+
+    @keyframes pulseGreen {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.25); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    /* Product Visual Hero Section */
+    .product-visual {
+      text-align: center;
+      margin: 14px 0 20px 0;
+      position: relative;
+    }
+
+    .img-wrapper {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      display: inline-block;
+      width: 100%;
+      max-width: 520px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .img-wrapper:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .product-visual img {
+      max-width: 100%;
+      height: 290px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: #ffffff;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Animated Trend Ribbon & Rating Ticker */
+    .trend-ribbon-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin: 12px 0 12px 0;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+
+    .trend-badge-choice {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .choice-tag {
+      background: #232f3e;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border-left: 3px solid #f08804;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .choice-accent {
+      color: #f08804;
+    }
+
+    .trend-tag {
+      background: linear-gradient(90deg, #dc2626 0%, #ea580c 100%);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .shimmer-stars-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .animated-stars {
+      color: #f59e0b;
+      font-size: 17px;
+      letter-spacing: 1.5px;
+    }
+
+    .rating-text {
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    /* Prime Exclusive Promo Enticement Box */
+    .prime-promo-banner {
+      background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+      border: 1.5px solid #38bdf8;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin: 14px 0 18px 0;
+      text-align: left;
+      box-shadow: 0 3px 10px rgba(56, 189, 248, 0.12);
+    }
+
+    .prime-logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .prime-check {
+      color: #00a8e1;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .prime-word {
+      color: #00a8e1;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 18px;
+    }
+
+    .prime-exclusive {
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
+    }
+
+    .prime-perks {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      color: #1e293b;
+      margin-bottom: 10px;
+    }
+
+    .perk-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .prime-urgency-pill {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .hook-box {
+      background: #f1f5f9;
+      border-left: 4px solid var(--primary);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 18px 0;
+      font-size: 14px;
+      font-style: italic;
+      color: #334155;
+      line-height: 1.6;
+    }
+
+    .benefits-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 12px;
+    }
+
+    .benefits-list {
+      margin: 16px 0;
+      list-style: none;
+    }
+
+    .benefits-list li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #1e293b;
+      line-height: 1.5;
+    }
+
+    .benefits-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--green);
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    .cta-box {
+      text-align: center;
+      margin: 28px 0 16px 0;
+    }
+
+    .cta-btn {
+      display: block;
+      width: 100%;
+      background: var(--amazon-btn);
+      color: #0f172a;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 800;
+      padding: 15px 24px;
+      border-radius: 10px;
+      border: 1px solid #d5d9d9;
+      box-shadow: 0 3px 10px rgba(213, 217, 217, 0.7);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .cta-btn:hover {
+      background: var(--amazon-btn-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(213, 217, 217, 0.9);
+    }
+
+    .pricing-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .footer {
+      background: #f8fafc;
+      border-top: 1px solid var(--border);
+      padding: 16px 20px;
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      .headline { font-size: 20px; }
+      .product-visual img { height: 230px; }
+      .content { padding: 16px; }
+      .trend-ribbon-bar { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+<body>
 
-  <!-- Top Announcement Bar -->
-  <header class="bg-slate-900 text-white text-xs sm:text-sm py-2 px-4 text-center font-medium">
-    🇺🇸 Verified US Consumer Deal &middot; Live Stock Updated for October 26, 2026
-  </header>
-
-  <!-- 4-Second Auto-Redirect Banner (Triggered by ?k4m) -->
-  <div id="redirect-banner" class="hidden bg-amber-400 text-slate-950 px-4 py-2.5 text-center text-xs sm:text-sm font-extrabold items-center justify-center gap-2 shadow-md">
-    <span>⚡ Connecting you to verified Amazon US stock & live deal...</span>
-    <span id="timer-count" class="bg-slate-950 text-amber-300 font-mono px-2 py-0.5 rounded text-xs">4s</span>
-  </div>
-
-  <!-- Main Content Container -->
-  <main class="max-w-3xl mx-auto px-4 py-8 sm:py-12 w-full">
+  <div class="container">
     
-    <!-- Category & Badge -->
-    <div class="flex flex-wrap items-center gap-2 mb-4">
-      <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">
-        Home &amp; Kitchen
-      </span>
-      
-      <span class="bg-amber-100 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-        ★ #1 Best Seller
-      </span>
-      
-      
-      <span class="bg-sky-600 text-white text-xs font-black px-2 py-0.5 rounded tracking-tighter">
-        prime 2-Day Delivery
-      </span>
-      
+    <!-- Top Editorial Header -->
+    <div class="top-bar">
+      <span>Verified US Consumer Guide &middot; October 27, 2026</span>
+      <span class="badge">#1 Best Seller</span>
     </div>
 
-    <!-- Main Headline -->
-    <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-4">
-      Why Americans Sitting 8+ Hours A Day Swear By This Pillow
-    </h1>
+    <!-- 4-Second Auto-Redirect Banner (Triggered by ?k4m) -->
+    <div class="redirect-notice" id="redirect-banner">
+      <span>⚡ Connecting you to official verified Amazon US stock & deal...</span>
+      <span class="timer" id="timer-count">4s</span>
+    </div>
 
-    <!-- Rating & Price Snapshot Card -->
-    <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div>
-        <h2 class="font-bold text-lg text-slate-800 leading-snug">Everlasting Comfort Memory Foam Lumbar Support Review</h2>
-        <div class="flex items-center gap-2 mt-1">
-          <span class="text-amber-500 font-black text-sm">★★★★★</span>
-          <span class="text-sm font-semibold text-slate-700">4.6 / 5.0</span>
-          <span class="text-xs text-slate-500">(47,000 verified US reviews)</span>
+    <div class="content">
+
+      <!-- Main Headline -->
+      <h1 class="headline">Why Americans Sitting 8+ Hours A Day Swear By This Pillow</h1>
+
+      <!-- Meta Line with Stars & Green Live Stock -->
+      <div class="meta-line">
+        <span class="stars">★★★★★ 4.6</span>
+        <span>(47,000+ Verified Reviews)</span>
+        <span>&bull;</span>
+        <span class="stock-green-text">
+          <svg style="width:14px;height:14px;display:inline-block;vertical-align:-1px;" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          In Stock: Amazon US
+        </span>
+      </div>
+
+      <!-- Professional Synchronized Green Stock Bar -->
+      <div class="pro-stock-bar">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="dot"></span>
+          <span>Verified Amazon US Stock &middot; Official Supplier Warehouse</span>
+        </div>
+        <span style="background:rgba(0,0,0,0.18);padding:2px 8px;border-radius:4px;font-size:10px;text-transform:uppercase;">
+          Ready to Ship
+        </span>
+      </div>
+
+      <!-- Product Visual Hero Image Section -->
+      
+      <div class="product-visual">
+        <div class="img-wrapper">
+          <a href="https://ergodesklab.org/reviews/lumbar-cushion-review/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist" target="_blank" rel="nofollow noopener" id="product-img-link">
+            <img src="https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="Everlasting Comfort Memory Foam Lumbar Support Review">
+          </a>
+        </div>
+
+        <!-- Animated Trend Ribbon & Glowing Star Ticker -->
+        <div class="trend-ribbon-bar">
+          <div class="trend-badge-choice">
+            <span class="choice-tag">Amazon's <span class="choice-accent">Choice</span></span>
+            <span class="trend-tag">🔥 Viral Trend #1</span>
+          </div>
+          <div class="shimmer-stars-box">
+            <span class="animated-stars">★★★★★</span>
+            <span class="rating-text"><strong>4.6 / 5.0</strong> (47,000+ Reviews)</span>
+          </div>
+        </div>
+
+        <!-- Prime Exclusive Promo Enticement Box -->
+        <div class="prime-promo-banner">
+          <div class="prime-logo-badge">
+            <span class="prime-check">✓</span><span class="prime-word">prime</span>
+            <span class="prime-exclusive">Exclusive Member Promo</span>
+          </div>
+          <div class="prime-perks">
+            <div class="perk-item"><span class="perk-icon">📦</span> <span><strong>FREE 2-Day &amp; Same-Day US Shipping</strong> for Prime Members</span></div>
+            <div class="perk-item"><span class="perk-icon">🏷️</span> <span><strong>Instant Clip Coupon:</strong> Save extra at Amazon checkout today</span></div>
+            <div class="perk-item"><span class="perk-icon">🛡️</span> <span><strong>Amazon Prime Buyer Protection</strong> &bull; 30-Day Hassle-Free Returns</span></div>
+          </div>
+          <div class="prime-urgency-pill">
+            ⚡ <strong>High Demand:</strong> Over 1,800+ Americans ordered this week &bull; Prime Stock Reserved
+          </div>
         </div>
       </div>
-      <div class="text-right flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 pt-3 sm:pt-0">
-        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Verified Price</span>
-        <span class="text-2xl sm:text-3xl font-black text-emerald-700">$39.99</span>
-      </div>
-    </div>
+      
 
-    
-    <!-- Product Visual Hero Image Section -->
-    <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 mb-8 shadow-sm text-center overflow-hidden">
-      <div class="relative inline-block max-w-full">
-        <a href="https://www.amazon.com/dp/B01IJNJAZ0?tag=prismeia-tw-20" target="_blank" rel="nofollow noopener">
-          <img src="https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="Everlasting Comfort Memory Foam Lumbar Support Review" 
-               class="max-h-72 sm:max-h-96 mx-auto rounded-xl object-contain transition-transform duration-300 hover:scale-105">
-        </a>
+      <!-- Editorial Intro / Hook Box -->
+      
+      <div class="hook-box">
+        "Chronic lower back stiffness is one of the leading workday complaints..."
       </div>
       
-      <!-- Prime Promo & Stock Urgency Ribbon -->
-      <div class="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
-        <div class="flex items-center gap-1.5 font-bold text-slate-800">
-          <span class="text-amber-500 font-black">★★★★★</span>
-          <span>4.6 / 5.0 (47,000+ Reviews)</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full text-xs">
-            ✔ Verified In Stock
-          </span>
-          <span class="bg-sky-100 text-sky-800 font-bold px-2.5 py-0.5 rounded-full text-xs">
-            📦 Prime 2-Day Shipping
-          </span>
-        </div>
-      </div>
-    </div>
-    
 
-    <!-- Editorial Intro Hook -->
-    <div class="prose prose-slate max-w-none text-base sm:text-lg text-slate-700 leading-relaxed mb-8">
-      <p>Chronic lower back stiffness is one of the leading workday complaints...</p>
-    </div>
-
-    <!-- Key Reasons / Benefits List -->
-    <div class="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-6 sm:p-8 mb-8">
-      <h3 class="text-lg sm:text-xl font-bold text-emerald-950 mb-4 flex items-center gap-2">
-        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        Why US Consumers Are Buying This:
-      </h3>
-      <ul class="space-y-3">
+      <!-- Key Reasons / Benefits List -->
+      
+      <div class="benefits-title">Why US Consumers Are Choosing This:</div>
+      <ul class="benefits-list">
         
-        <li class="flex items-start gap-3 text-slate-800 text-sm sm:text-base font-medium">
-          <span class="text-emerald-600 text-lg leading-none mt-0.5">✔</span>
-          <span>100% pure premium memory foam responding to body heat</span>
-        </li>
+        <li>100% pure premium memory foam responding to body heat</li>
         
-        <li class="flex items-start gap-3 text-slate-800 text-sm sm:text-base font-medium">
-          <span class="text-emerald-600 text-lg leading-none mt-0.5">✔</span>
-          <span>Ergonomic dual-strap design fits office and car seats</span>
-        </li>
+        <li>Ergonomic dual-strap design fits office and car seats</li>
         
-        <li class="flex items-start gap-3 text-slate-800 text-sm sm:text-base font-medium">
-          <span class="text-emerald-600 text-lg leading-none mt-0.5">✔</span>
-          <span>Over 46,500 verified 5-star customer reviews</span>
-        </li>
+        <li>Over 46,500 verified 5-star customer reviews</li>
         
       </ul>
+      
+
+      <!-- High-Impact CTA Section -->
+      <div class="cta-box">
+        <a href="https://ergodesklab.org/reviews/lumbar-cushion-review/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist" class="cta-btn" id="main-cta-btn" target="_blank" rel="nofollow noopener">
+          👉 Check Availability on Amazon US
+        </a>
+        <div class="pricing-sub">
+          <span>🔒 Direct SSL Encrypted Link</span>
+          <span>&bull;</span>
+          <span>Official Amazon Prime US Guarantee</span>
+        </div>
+      </div>
+
     </div>
 
-    
-    <!-- Who Is This For -->
-    <div class="bg-white border border-slate-200 rounded-xl p-5 mb-8">
-      <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2">Ideal Solution For:</h4>
-      <p class="text-slate-600 text-sm">Office Workers &amp; Drivers</p>
-    </div>
-    
-
-    <!-- High-Impact CTA Section -->
-    <div class="text-center py-6">
-      <a href="https://www.amazon.com/dp/B01IJNJAZ0?tag=prismeia-tw-20" target="_blank" rel="nofollow noopener" 
-         class="amazon-btn-gradient block sm:inline-block w-full sm:w-auto text-slate-950 font-extrabold text-base sm:text-lg py-4 px-10 rounded-xl transition-transform hover:-translate-y-0.5 uppercase tracking-wide">
-        Check Availability on Amazon US &rarr;
-      </a>
-      <p class="text-xs text-slate-500 mt-3 flex items-center justify-center gap-1">
-        🔒 Direct SSL Encrypted Amazon US Store Link &middot; Ships from Amazon Fulfillment
-      </p>
-    </div>
-
-  </main>
-
-  <!-- Amazon Associates Compliance Disclosure -->
-  <footer class="bg-slate-100 border-t border-slate-200 py-8 px-4 text-center text-xs text-slate-500">
-    <div class="max-w-2xl mx-auto space-y-2">
-      <p class="font-medium text-slate-600">
+    <!-- Amazon Associates Legal Compliance Disclosure Footer -->
+    <div class="footer">
+      <p style="margin-bottom:6px;">
         As an Amazon Associate, we earn from qualifying purchases. Pricing and availability are accurate as of the date indicated and are subject to change.
       </p>
-      <p>
-        Amazon and the Amazon logo are trademarks of Amazon.com, Inc. or its affiliates. All product information, availability, and pricing are verified from official public seller listings.
-      </p>
-      <p class="text-slate-400 pt-2">
-        &copy; 2026 Consumer Trend Review Lab. All Rights Reserved.
+      <p style="color:#94a3b8;font-size:10px;">
+        Amazon and the Amazon logo are trademarks of Amazon.com, Inc. or its affiliates. Product listings, ratings and availability are accurate as of verified date.
       </p>
     </div>
-  </footer>
 
-  <!-- 4-Second Auto-Redirect Script -->
+  </div>
+
+  <!-- 4-Second Auto-Redirect Script (Triggered when opened with ?k4m or ?k4) -->
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('k4m') || urlParams.has('k4')) {
+    const hasTrigger = urlParams.has('k4m') || urlParams.has('k4');
+
+    if (hasTrigger) {
       const banner = document.getElementById('redirect-banner');
       const timerDisplay = document.getElementById('timer-count');
       if (banner) {
-        banner.classList.remove('hidden');
-        banner.classList.add('flex');
+        banner.style.display = 'flex';
         let sec = 4;
-        const timer = setInterval(() => {
+        const interval = setInterval(() => {
           sec--;
           if (timerDisplay) timerDisplay.innerText = sec + 's';
           if (sec <= 0) {
-            clearInterval(timer);
-            window.location.href = "https://www.amazon.com/dp/B01IJNJAZ0?tag=prismeia-tw-20";
+            clearInterval(interval);
+            window.location.href = "https://ergodesklab.org/reviews/lumbar-cushion-review/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist";
           }
         }, 1000);
       }
     }
   </script>
+
 </body>
 </html>
