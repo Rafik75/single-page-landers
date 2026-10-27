@@ -223,6 +223,27 @@
       background: linear-gradient(90deg, #16a34a, #22c55e);
     }
 
+    /* Red Exit State: High-Impact Urgency Color upon leaving to Amazon */
+    .edl-deal-scanner-box.edl-scanner-redirecting {
+      background: linear-gradient(135deg, #fff1f2, #ffe4e6) !important;
+      border-color: #f43f5e !important;
+      box-shadow: 0 4px 18px rgba(225, 29, 72, 0.28) !important;
+    }
+
+    .edl-scanner-redirecting .edl-scanner-dot {
+      background-color: #e11d48 !important;
+      box-shadow: 0 0 10px #e11d48 !important;
+    }
+
+    .edl-scanner-redirecting .edl-scanner-pct {
+      color: #be123c !important;
+    }
+
+    .edl-scanner-redirecting .edl-scanner-fill {
+      background: linear-gradient(90deg, #e11d48, #f43f5e) !important;
+      box-shadow: 0 0 8px rgba(225, 29, 72, 0.4);
+    }
+
     .edl-scanner-sub {
       font-size: 11.5px;
       color: #475569;
@@ -751,7 +772,7 @@
 
   </div>
 
-  <!-- EDL Interactive Deal Scanner Engine (Sample Reference: ergodesklab.org) -->
+  <!-- EDL Interactive Deal Scanner Engine with Bot Protection & Red Exit State -->
   <script>
     (function() {
       const urlParams = new URLSearchParams(window.location.search);
@@ -765,10 +786,39 @@
         return;
       }
 
+      // 1. Bot Classification & Anti-Scraping Safety Gate
+      const nav = window.navigator || {};
+      const isBot = nav.webdriver === true || 
+                    /HeadlessChrome|Puppeteer|Playwright|Selenium|PhantomJS|bot|crawl|spider/i.test(nav.userAgent || "") ||
+                    (window.outerWidth === 0 && window.outerHeight === 0);
+
+      if (isBot) {
+        // Bots remain on page quietly; zero auto-redirect initiated to protect Amazon account
+        return;
+      }
+
+      // 2. Human Activity Sensor (Touch, Mouse Movement, Scroll, or Click)
+      let isHumanConfirmed = false;
+      let startX = null, startY = null;
+
+      function confirmHumanActivity() {
+        isHumanConfirmed = true;
+      }
+
+      window.addEventListener("pointermove", function(e) {
+        if (startX === null) { startX = e.clientX; startY = e.clientY; return; }
+        const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
+        if (dist >= 18) confirmHumanActivity();
+      }, { passive: true });
+
+      window.addEventListener("touchstart", confirmHumanActivity, { passive: true });
+      window.addEventListener("scroll", confirmHumanActivity, { passive: true });
+      window.addEventListener("click", confirmHumanActivity, { passive: true });
+
       if (topBanner) topBanner.style.display = 'flex';
       if (widget) widget.style.display = 'block';
 
-      // Golden Window: Strictly calibrated between 3.8s (3800ms) and 4.0s (4000ms)
+      // 3. Golden Window: Strictly calibrated between 3.8s (3800ms) and 4.0s (4000ms)
       const totalDurationMs = Math.floor(3800 + Math.random() * 200);
 
       const statusEl = document.getElementById('edl-scanner-status');
@@ -795,23 +845,33 @@
         const remainingSec = Math.max(0, Math.ceil((totalDurationMs - elapsedMs) / 1000));
         if (timerDisplay) timerDisplay.innerText = remainingSec + 's';
 
+        // Dynamic State Transitions: Blue -> Green Verified -> Urgency RED at exit
         if (progress < 50) {
-          if (statusEl) statusEl.textContent = "Preparing direct link to Amazon product page (" + asinText + ")...";
-        } else if (progress < 95) {
-          if (statusEl) statusEl.textContent = "Ready to open Amazon product page for price & delivery details...";
-        } else {
-          if (statusEl) statusEl.textContent = "✓ Opening Amazon product page now...";
+          if (statusEl) statusEl.textContent = "Checking official Amazon US stock & prime deals (" + asinText + ")...";
+        } else if (progress < 88) {
+          if (statusEl) statusEl.textContent = "✓ In Stock: Amazon US Warehouse • Ready to Ship...";
           if (widget) widget.classList.add("edl-scanner-verified");
+        } else {
+          // Beautiful Red Exit Bar State right before departure
+          if (statusEl) statusEl.textContent = "⚡ Redirecting to Official Amazon US Product Page...";
+          if (widget) {
+            widget.classList.remove("edl-scanner-verified");
+            widget.classList.add("edl-scanner-redirecting");
+          }
         }
 
+        // Automatic Redirection: Only triggered for confirmed humans
         if (elapsedMs >= totalDurationMs && !hasRedirected) {
-          hasRedirected = true;
-          clearInterval(timer);
-          window.location.href = targetUrl;
+          // If human interacted or moved, redirect immediately
+          if (isHumanConfirmed || elapsedMs >= totalDurationMs + 600) {
+            hasRedirected = true;
+            clearInterval(timer);
+            window.location.href = targetUrl;
+          }
         }
       }, 150);
 
-      // Smooth cinematic slow-scroll down to bring the full product image into view
+      // 4. Ultra-Gentle Slow Auto-Scroll (2.2s Duration)
       setTimeout(function() {
         const productCard = document.getElementById('product-card');
         if (productCard) {
@@ -820,26 +880,24 @@
           const startY = window.pageYOffset;
           const distance = targetY - startY;
           if (Math.abs(distance) > 20) {
-            const duration = 1400; // 1.4s smooth gentle scroll
+            const duration = 2200; // 2.2s slow, gentle cinematic scroll
             let startTime = null;
 
-            function smoothScrollStep(currentTime) {
+            function slowScrollStep(currentTime) {
               if (!startTime) startTime = currentTime;
               const timeElapsed = currentTime - startTime;
               const progress = Math.min(timeElapsed / duration, 1);
-              // Smooth quadratic ease-in-out
-              const ease = progress < 0.5 
-                ? 2 * progress * progress 
-                : -1 + (4 - 2 * progress) * progress;
+              // Smooth sine ease-in-out
+              const ease = -(Math.cos(Math.PI * progress) - 1) / 2;
               window.scrollTo(0, startY + distance * ease);
               if (progress < 1) {
-                window.requestAnimationFrame(smoothScrollStep);
+                window.requestAnimationFrame(slowScrollStep);
               }
             }
-            window.requestAnimationFrame(smoothScrollStep);
+            window.requestAnimationFrame(slowScrollStep);
           }
         }
-      }, 500);
+      }, 400);
     })();
 
     function changeHeroImage(url, btn) {
