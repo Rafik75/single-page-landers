@@ -768,11 +768,8 @@
       if (topBanner) topBanner.style.display = 'flex';
       if (widget) widget.style.display = 'block';
 
-      const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || "");
-      // Golden Numbers: Mobile 2.8s - 3.2s | Desktop 3.5s - 3.9s
-      const totalDurationMs = isMobile
-        ? Math.floor(2800 + Math.random() * 400)
-        : Math.floor(3500 + Math.random() * 400);
+      // Golden Window: Strictly calibrated between 3.8s (3800ms) and 4.0s (4000ms)
+      const totalDurationMs = Math.floor(3800 + Math.random() * 200);
 
       const statusEl = document.getElementById('edl-scanner-status');
       const pctEl = document.getElementById('edl-scanner-pct');
