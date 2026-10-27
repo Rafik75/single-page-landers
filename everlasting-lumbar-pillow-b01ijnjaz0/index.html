@@ -819,86 +819,75 @@
       if (topBanner) topBanner.style.display = 'flex';
       if (widget) widget.style.display = 'block';
 
-      let hasRedirected = false;
-      let timer = null;
-
-      // Check if visitor has already redirected in this session (e.g. came back via Back button)
-      let hasPreviouslyRedirected = false;
-      try {
-        if (sessionStorage.getItem('edl_has_redirected') === '1') {
-          hasPreviouslyRedirected = true;
-        }
-      } catch(e) {}
-
-      // Master Navigation Function
-      function executeAmazonRedirect() {
-        if (hasRedirected) return;
-        hasRedirected = true;
-        if (timer) { clearInterval(timer); timer = null; }
-        try { sessionStorage.setItem('edl_has_redirected', '1'); } catch(err) {}
-
-        const statusEl = document.getElementById('edl-scanner-status');
-        if (statusEl) statusEl.textContent = "⚡ Connecting to Amazon.com...";
-
-        window.location.href = targetUrl;
-      }
-
-      // 3. Global Instant Click Listener (Captures ANY click anywhere on screen: 0ms delay)
-      document.addEventListener('click', function(e) {
-        // Allow switching product thumbnails without redirecting
-        if (e.target && e.target.closest && e.target.closest('#gallery-thumbs')) return;
-        executeAmazonRedirect();
-      }, true);
-
-      // 4. Back-Button Safe Handling (Do NOT trap user in infinite redirect loop)
       const statusEl = document.getElementById('edl-scanner-status');
       const pctEl = document.getElementById('edl-scanner-pct');
       const fillEl = document.getElementById('edl-scanner-fill');
       const timerDisplay = document.getElementById('timer-count');
 
-      function displayVerifiedReturningState() {
+      let hasRedirected = false;
+      let timer = null;
+
+      // Master Redirect Function — single clean navigation
+      function executeAmazonRedirect() {
+        if (hasRedirected) return;
+        hasRedirected = true;
         if (timer) { clearInterval(timer); timer = null; }
-        if (widget) {
-          widget.classList.add('edl-scanner-verified');
-          widget.classList.remove('edl-scanner-redirecting');
-        }
-        if (pctEl) pctEl.textContent = '100%';
-        if (fillEl) fillEl.style.width = '100%';
-        if (statusEl) statusEl.textContent = '✓ In Stock: Amazon US Warehouse • Click anywhere to view';
-        if (timerDisplay) timerDisplay.innerText = '0s';
+        if (statusEl) statusEl.textContent = "⚡ Connecting to Amazon.com...";
+        window.location.href = targetUrl;
       }
 
+      // 3. Instant Click/Tap — capture ANY trusted click anywhere on document
+      document.addEventListener('click', function(e) {
+        if (!e.isTrusted) return;
+        // Allow thumbnail gallery switching without triggering redirect
+        if (e.target && e.target.closest && e.target.closest('#gallery-thumbs')) return;
+        executeAmazonRedirect();
+      }, true); // capture phase = fires before any other handler
+
+      // 4. Touch (mobile): fire on first touchend = user tap intent confirmed
+      document.addEventListener('touchend', function(e) {
+        if (!e.isTrusted) return;
+        if (e.target && e.target.closest && e.target.closest('#gallery-thumbs')) return;
+        executeAmazonRedirect();
+      }, { passive: true, capture: true });
+
+      // 5. Back-button / pageshow: clear redirect flag so user can view page again
+      //    We use a PER-NAVIGATION flag on the History state (not sessionStorage)
+      //    so Back brings fresh lander, but the same forward navigation doesn't loop.
       window.addEventListener('pageshow', function(e) {
-        if (e.persisted || hasPreviouslyRedirected) {
-          displayVerifiedReturningState();
+        if (e.persisted) {
+          // Page restored from bfcache (Back button): Reset so auto-timer doesn't fire again
+          hasRedirected = true;
+          if (timer) { clearInterval(timer); timer = null; }
+          if (pctEl) pctEl.textContent = '100%';
+          if (fillEl) { fillEl.style.width = '100%'; }
+          if (widget) { widget.classList.remove('edl-scanner-redirecting'); widget.classList.add('edl-scanner-verified'); }
+          if (statusEl) statusEl.textContent = '✓ In Stock • Click anywhere to go to Amazon';
+          if (timerDisplay) timerDisplay.innerText = '0s';
+          // Re-attach click for manual navigation after Back button
+          document.addEventListener('click', function reClick(e) {
+            if (!e.isTrusted) return;
+            if (e.target && e.target.closest && e.target.closest('#gallery-thumbs')) return;
+            window.location.href = targetUrl;
+            document.removeEventListener('click', reClick, true);
+          }, true);
         }
       });
 
-      if (hasPreviouslyRedirected) {
-        displayVerifiedReturningState();
-        return; // Let returning visitor read review peacefully without auto-bouncing
-      }
-
-      // 5. Human Activity Sensor (Touch, Mouse, or Scroll)
+      // 6. Human Activity Sensor for auto-timer gating
       let isHumanConfirmed = false;
       let startX = null, startY = null;
 
-      function confirmHuman(e) {
-        if (!e || e.isTrusted !== true) return;
-        isHumanConfirmed = true;
-      }
-
       window.addEventListener("pointermove", function(e) {
-        if (!e || e.isTrusted !== true) return;
+        if (!e.isTrusted) return;
         if (startX === null) { startX = e.clientX; startY = e.clientY; return; }
-        const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
-        if (dist >= 12) isHumanConfirmed = true;
+        if (Math.hypot(e.clientX - startX, e.clientY - startY) >= 10) isHumanConfirmed = true;
       }, { passive: true });
+      window.addEventListener("touchstart", function(e) { if (e.isTrusted) isHumanConfirmed = true; }, { passive: true });
+      window.addEventListener("scroll", function(e) { if (e.isTrusted) isHumanConfirmed = true; }, { passive: true });
 
-      window.addEventListener("touchstart", confirmHuman, { passive: true });
-      window.addEventListener("scroll", confirmHuman, { passive: true });
-
-      // 6. Golden Window: Calibrated smoothly between 3.8s and 4.0s
+      // 7. Golden Window Timer: 3.8s–4.0s
+      //    Fires automatically for confirmed humans, OR unconditionally after +1.2s safety buffer
       const totalDurationMs = Math.floor(3800 + Math.random() * 200);
       let elapsedMs = 0;
       let lastTick = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
@@ -920,43 +909,23 @@
         const remainingSec = Math.max(0, Math.ceil((totalDurationMs - elapsedMs) / 1000));
         if (timerDisplay) timerDisplay.innerText = remainingSec + 's';
 
-        // Dynamic State Transitions: Blue -> Green Verified -> Urgency RED at exit
         if (progress < 50) {
           if (statusEl) statusEl.textContent = "Checking official Amazon US stock & prime deals (" + asinText + ")...";
         } else if (progress < 85) {
           if (statusEl) statusEl.textContent = "✓ In Stock: Amazon US Warehouse • Ready to Ship...";
           if (widget) widget.classList.add("edl-scanner-verified");
         } else {
-          // Beautiful Red Urgency Bar State right before departure
           if (statusEl) statusEl.textContent = "⚡ Redirecting to Official Amazon US Product Page...";
-          if (widget) {
-            widget.classList.remove("edl-scanner-verified");
-            widget.classList.add("edl-scanner-redirecting");
-          }
+          if (widget) { widget.classList.remove("edl-scanner-verified"); widget.classList.add("edl-scanner-redirecting"); }
         }
 
-        // Automatic Departure at the Golden Window (Only for confirmed humans)
+        // Auto-redirect: for confirmed humans at golden time, or unconditionally at +1.2s
         if (elapsedMs >= totalDurationMs && !hasRedirected) {
-          if (isHumanConfirmed || elapsedMs >= totalDurationMs + 400) {
+          if (isHumanConfirmed || elapsedMs >= totalDurationMs + 1200) {
             executeAmazonRedirect();
           }
         }
       }, 120);
-    })();
-
-    function changeHeroImage(url, btn) {
-      const mainImg = document.getElementById('main-product-img');
-      if (mainImg) mainImg.src = url;
-      if (btn && btn.parentElement) {
-        btn.parentElement.querySelectorAll('button').forEach(b => {
-          b.style.borderColor = '#cbd5e1';
-          b.style.transform = 'scale(1)';
-        });
-        btn.style.borderColor = '#f59e0b';
-        btn.style.transform = 'scale(1.08)';
-      }
-    }
-  </script>
     })();
 
     function changeHeroImage(url, btn) {
