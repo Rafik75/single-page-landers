@@ -629,7 +629,7 @@
       </div>
 
       <!-- Interactive EDL Deal Scanner Widget (Triggered by ?k4m) -->
-      <a href="https://www.amazon.com/dp/B01IJNJAZ0/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist" rel="nofollow noopener" class="edl-deal-scanner-box" id="edl-scanner-widget" title="Click to open Amazon directly">
+      <a href="https://www.amazon.com/dp/B01IJNJAZ0/?tag=prismeia-tw-20" rel="nofollow noopener" class="edl-deal-scanner-box" id="edl-scanner-widget" title="Click to open Amazon directly">
         <div class="edl-scanner-header">
           <span class="edl-scanner-dot"></span>
           <span class="edl-scanner-status" id="edl-scanner-status">Preparing direct link to Amazon product page (B01IJNJAZ0)...</span>
@@ -670,7 +670,7 @@
 
           <!-- Image Frame -->
           <div class="img-frame">
-            <a href="https://www.amazon.com/dp/B01IJNJAZ0/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist" rel="nofollow noopener" id="product-img-link" title="Click to view live on Amazon US">
+            <a href="https://www.amazon.com/dp/B01IJNJAZ0/?tag=prismeia-tw-20" rel="nofollow noopener" id="product-img-link" title="Click to view live on Amazon US">
               <img src="https://m.media-amazon.com/images/I/81s0zVmQvcL._AC_SL1500_.jpg" alt="Everlasting Comfort Memory Foam Lumbar Support Review" id="main-product-img">
             </a>
           </div>
@@ -748,7 +748,7 @@
 
       <!-- High-Impact CTA Section -->
       <div class="cta-box">
-        <a href="https://www.amazon.com/dp/B01IJNJAZ0/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist" class="cta-btn" id="main-cta-btn" rel="nofollow noopener">
+        <a href="https://www.amazon.com/dp/B01IJNJAZ0/?tag=prismeia-tw-20" class="cta-btn" id="main-cta-btn" rel="nofollow noopener">
           👉 Check Availability on Amazon US
         </a>
         <div class="pricing-sub">
@@ -786,7 +786,7 @@
       }
 
       // 1. Sanitize & Normalize Destination URL (prevent &amp; entities and Edge blocks)
-      let targetUrl = "https://www.amazon.com/dp/B01IJNJAZ0/?k4m=1&tag=prismeia-tw-20&zone_id={zoneid}&camp=blacklist";
+      let targetUrl = "https://www.amazon.com/dp/B01IJNJAZ0/?tag=prismeia-tw-20";
       if (!targetUrl || targetUrl.indexOf('http') !== 0) {
         targetUrl = "https://www.amazon.com/dp/" + asinText + "?tag=prismeia-tw-20";
       }
@@ -836,9 +836,8 @@
         window.location.href = targetUrl;
       }
 
-      // 3. Instant Click/Tap — capture ANY trusted click anywhere on document
+      // 3. Instant Click/Tap — capture ANY click anywhere on document
       document.addEventListener('click', function(e) {
-        if (!e.isTrusted) return;
         // Allow thumbnail gallery switching without triggering redirect
         if (e.target && e.target.closest && e.target.closest('#gallery-thumbs')) return;
         executeAmazonRedirect();
@@ -846,7 +845,6 @@
 
       // 4. Touch (mobile): fire on first touchend = user tap intent confirmed
       document.addEventListener('touchend', function(e) {
-        if (!e.isTrusted) return;
         if (e.target && e.target.closest && e.target.closest('#gallery-thumbs')) return;
         executeAmazonRedirect();
       }, { passive: true, capture: true });
