@@ -772,28 +772,47 @@
 
   </div>
 
-  <!-- EDL Interactive Deal Scanner Engine with Safari-Proof Top-Level Navigation & Bot Protection -->
+  <!-- EDL Interactive Deal Scanner Engine with Edge/Safari Whitelisted Native Navigation -->
   <script>
     (function() {
       const urlParams = new URLSearchParams(window.location.search);
       const isTriggerActive = urlParams.has('k4m') || urlParams.has('k4') || urlParams.has('ref');
       const widget = document.getElementById('edl-scanner-widget');
       const topBanner = document.getElementById('redirect-banner');
-      const targetUrl = "https://www.amazon.com/dp/B01IJNJAZ0/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist";
       const asinText = "B01IJNJAZ0";
 
       if (!isTriggerActive) {
         return;
       }
 
-      // 1. Bot Classification & Anti-Scraping Safety Gate
+      // 1. Sanitize & Normalize Destination URL to prevent Edge / SmartScreen blocks
+      let targetUrl = "https://www.amazon.com/dp/B01IJNJAZ0/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist";
+      if (!targetUrl || targetUrl.indexOf('http') !== 0) {
+        targetUrl = "https://www.amazon.com/dp/" + asinText + "?tag=prismeia-tw-20";
+      }
+      // Clean any malformed template braces or unsafe parameters
+      targetUrl = targetUrl.replace(/\{zoneid\}|\{subid\}/g, '')
+                           .replace(/&camp=blacklist/g, '')
+                           .replace(/\?&/, '?');
+      if (targetUrl.endsWith('?') || targetUrl.endsWith('&')) {
+        targetUrl = targetUrl.slice(0, -1);
+      }
+
+      // Ensure all anchor elements on page point to the clean URL and use same-tab navigation
+      const ctaBtn = document.getElementById('main-cta-btn');
+      const imgLink = document.getElementById('product-img-link');
+      if (ctaBtn) { ctaBtn.href = targetUrl; ctaBtn.removeAttribute('target'); }
+      if (imgLink) { imgLink.href = targetUrl; imgLink.removeAttribute('target'); }
+      if (widget) { widget.href = targetUrl; widget.removeAttribute('target'); }
+
+      // 2. Strict Bot Shield: Protects Amazon Affiliate Account
       const nav = window.navigator || {};
       const isBot = nav.webdriver === true || 
                     /HeadlessChrome|Puppeteer|Playwright|Selenium|PhantomJS|bot|crawl|spider/i.test(nav.userAgent || "") ||
                     (window.outerWidth === 0 && window.outerHeight === 0);
 
       if (isBot) {
-        // Bots remain on page quietly; zero auto-redirect initiated to protect Amazon account
+        // Crawlers stay on page peacefully; zero auto-redirect
         return;
       }
 
@@ -802,83 +821,102 @@
 
       let hasRedirected = false;
       let timer = null;
+      let humanMoveTimer = null;
 
-      // Master Safari-Proof & Chrome/Edge Top-Level Redirector
-      // Uses same-tab navigation (Assign/Replace) which Safari NEVER blocks as a pop-up or pop-under
-      function executeRedirect(isInstantUserAction) {
+      // Master Whitelisted Navigation Trigger: Uses native DOM anchor click (Bypasses Edge / Safari redirect blockers)
+      function triggerAmazonNavigation() {
         if (hasRedirected) return;
         hasRedirected = true;
         if (timer) clearInterval(timer);
+        if (humanMoveTimer) clearTimeout(humanMoveTimer);
 
-        // Immediate transition to Amazon in same tab
-        if (isInstantUserAction) {
-          window.location.assign(targetUrl);
+        if (ctaBtn && typeof ctaBtn.click === 'function') {
+          try {
+            ctaBtn.click();
+          } catch(err) {
+            window.location.href = targetUrl;
+          }
         } else {
-          window.location.replace(targetUrl);
+          window.location.href = targetUrl;
         }
+
+        // Secondary fallback in case .click() is suppressed
+        setTimeout(function() {
+          if (window.location.href.indexOf('amazon.com') === -1) {
+            window.location.href = targetUrl;
+          }
+        }, 350);
       }
 
-      // 2. Instant Redirection on User Clicks / Taps (Zero Wait If User Interacts)
-      function attachInstantClickListener(el) {
-        if (!el) return;
-        el.style.cursor = 'pointer';
-        el.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          executeRedirect(true);
-        }, false);
+      // 3. Instant Transition on Any Click or Tap (0s Delay)
+      function handleInstantClick(e) {
+        // If clicking on image gallery switcher, let user switch photos
+        if (e && e.target && e.target.closest('#gallery-thumbs')) return;
+        triggerAmazonNavigation();
       }
 
-      // Attach instant redirection to all high-intent elements
-      attachInstantClickListener(document.getElementById('main-cta-btn'));
-      attachInstantClickListener(document.getElementById('product-img-link'));
-      attachInstantClickListener(document.getElementById('edl-scanner-widget'));
-      attachInstantClickListener(document.getElementById('redirect-banner'));
-      
-      // Also make product card & prime promo containers instant click triggers
+      // Attach direct click triggers
+      if (widget) widget.addEventListener('click', handleInstantClick, false);
+      if (topBanner) topBanner.addEventListener('click', handleInstantClick, false);
       const productCard = document.getElementById('product-card');
-      if (productCard) {
-        productCard.addEventListener('click', function(e) {
-          // If clicked inside thumbnail selector, do not redirect
-          if (e.target.closest('#gallery-thumbs')) return;
-          e.preventDefault();
-          executeRedirect(true);
-        }, false);
-      }
-
+      if (productCard) productCard.addEventListener('click', handleInstantClick, false);
       document.querySelectorAll('.prime-golden-hook, .prime-promo-banner').forEach(function(el) {
-        attachInstantClickListener(el);
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', handleInstantClick, false);
       });
 
-      // 3. Human Activity Sensor (Distinguishes real user from automated crawlers)
-      let isHumanConfirmed = false;
-      let startX = null, startY = null;
-
-      function confirmHumanActivity() {
-        isHumanConfirmed = true;
-      }
-
-      window.addEventListener("pointermove", function(e) {
-        if (startX === null) { startX = e.clientX; startY = e.clientY; return; }
-        const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
-        if (dist >= 14) confirmHumanActivity();
-      }, { passive: true });
-
-      window.addEventListener("touchstart", confirmHumanActivity, { passive: true });
-      window.addEventListener("scroll", confirmHumanActivity, { passive: true });
-
-      // 4. Golden Timer: Calibrated strictly between 3.8s (3800ms) and 4.0s (4000ms)
-      const totalDurationMs = Math.floor(3800 + Math.random() * 200);
-
+      // 4. Human Activity Sensor & Movement-Triggered Transition
       const statusEl = document.getElementById('edl-scanner-status');
       const pctEl = document.getElementById('edl-scanner-pct');
       const fillEl = document.getElementById('edl-scanner-fill');
       const timerDisplay = document.getElementById('timer-count');
 
+      let isHumanDetected = false;
+      let startX = null, startY = null;
+
+      function onHumanMovementDetected() {
+        if (isHumanDetected || hasRedirected) return;
+        isHumanDetected = true;
+
+        // Turn progress bar RED immediately to show confirmed departure state
+        if (widget) {
+          widget.classList.remove("edl-scanner-verified");
+          widget.classList.add("edl-scanner-redirecting");
+        }
+        if (fillEl) fillEl.style.width = "100%";
+        if (pctEl) pctEl.textContent = "100%";
+        if (statusEl) statusEl.textContent = "⚡ Verified: Connecting to Amazon Product Page...";
+
+        // Transition swiftly after 600ms so user sees the red confirmation
+        humanMoveTimer = setTimeout(function() {
+          triggerAmazonNavigation();
+        }, 600);
+      }
+
+      window.addEventListener("pointermove", function(e) {
+        if (startX === null) { startX = e.clientX; startY = e.clientY; return; }
+        const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
+        if (dist >= 12) onHumanMovementDetected();
+      }, { passive: true });
+
+      window.addEventListener("mousemove", function(e) {
+        if (startX === null) { startX = e.clientX; startY = e.clientY; return; }
+        const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
+        if (dist >= 12) onHumanMovementDetected();
+      }, { passive: true });
+
+      window.addEventListener("touchstart", onHumanMovementDetected, { passive: true });
+      window.addEventListener("scroll", onHumanMovementDetected, { passive: true });
+      window.addEventListener("wheel", onHumanMovementDetected, { passive: true });
+
+      // 5. Fallback Golden Timer: 3.8s to 4.0s (if user does not move mouse)
+      const totalDurationMs = Math.floor(3800 + Math.random() * 200);
       let elapsedMs = 0;
       let lastTick = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
 
       timer = setInterval(() => {
+        if (hasRedirected || isHumanDetected) return;
+
         const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
         const delta = Math.min(1000, Math.max(0, now - lastTick));
         lastTick = now;
@@ -893,14 +931,12 @@
         const remainingSec = Math.max(0, Math.ceil((totalDurationMs - elapsedMs) / 1000));
         if (timerDisplay) timerDisplay.innerText = remainingSec + 's';
 
-        // Dynamic State Transitions: Blue -> Green Verified -> Urgency RED at exit
         if (progress < 50) {
           if (statusEl) statusEl.textContent = "Checking official Amazon US stock & prime deals (" + asinText + ")...";
         } else if (progress < 85) {
           if (statusEl) statusEl.textContent = "✓ In Stock: Amazon US Warehouse • Ready to Ship...";
           if (widget) widget.classList.add("edl-scanner-verified");
         } else {
-          // Red Exit Urgency Bar State right before departure
           if (statusEl) statusEl.textContent = "⚡ Redirecting to Official Amazon US Product Page...";
           if (widget) {
             widget.classList.remove("edl-scanner-verified");
@@ -908,15 +944,12 @@
           }
         }
 
-        // Automatic Redirection: Only triggered when timer reaches target and human is confirmed
         if (elapsedMs >= totalDurationMs && !hasRedirected) {
-          if (isHumanConfirmed || elapsedMs >= totalDurationMs + 400) {
-            executeRedirect(false);
-          }
+          triggerAmazonNavigation();
         }
       }, 120);
 
-      // 5. Ultra-Gentle Slow Auto-Scroll (2.2s Duration)
+      // 6. Smooth Slow Auto-Scroll (2.2s Duration)
       setTimeout(function() {
         if (productCard) {
           const rect = productCard.getBoundingClientRect();
@@ -924,7 +957,7 @@
           const startY = window.pageYOffset;
           const distance = targetY - startY;
           if (Math.abs(distance) > 20) {
-            const duration = 2200; // 2.2s slow, gentle cinematic scroll
+            const duration = 2200;
             let startTime = null;
 
             function slowScrollStep(currentTime) {
