@@ -785,20 +785,20 @@
         return;
       }
 
-      // 1. Sanitize & Normalize Destination URL to prevent Edge / SmartScreen blocks
-      let targetUrl = "https://www.amazon.com/dp/B01IJNJAZ0/?k4m=1&amp;tag=prismeia-tw-20&amp;zone_id={zoneid}&amp;camp=blacklist";
+      // 1. Sanitize & Normalize Destination URL (prevent &amp; entities and Edge blocks)
+      let targetUrl = "https://www.amazon.com/dp/B01IJNJAZ0/?k4m=1&tag=prismeia-tw-20&zone_id={zoneid}&camp=blacklist";
       if (!targetUrl || targetUrl.indexOf('http') !== 0) {
         targetUrl = "https://www.amazon.com/dp/" + asinText + "?tag=prismeia-tw-20";
       }
-      // Clean any malformed template braces or unsafe parameters
-      targetUrl = targetUrl.replace(/\{zoneid\}|\{subid\}/g, '')
+      targetUrl = targetUrl.replace(/&amp;/g, '&')
+                           .replace(/\{zoneid\}|\{subid\}/g, '')
                            .replace(/&camp=blacklist/g, '')
                            .replace(/\?&/, '?');
       if (targetUrl.endsWith('?') || targetUrl.endsWith('&')) {
         targetUrl = targetUrl.slice(0, -1);
       }
 
-      // Ensure all anchor elements on page point to the clean URL and use same-tab navigation
+      // Ensure all anchor elements point directly to the clean target URL with same-tab navigation
       const ctaBtn = document.getElementById('main-cta-btn');
       const imgLink = document.getElementById('product-img-link');
       if (ctaBtn) { ctaBtn.href = targetUrl; ctaBtn.removeAttribute('target'); }
@@ -812,7 +812,7 @@
                     (window.outerWidth === 0 && window.outerHeight === 0);
 
       if (isBot) {
-        // Crawlers stay on page peacefully; zero auto-redirect
+        // Bots stay quietly on the page without auto-redirection
         return;
       }
 
@@ -821,41 +821,40 @@
 
       let hasRedirected = false;
       let timer = null;
-      let humanMoveTimer = null;
 
-      // Master Whitelisted Navigation Trigger: Uses native DOM anchor click (Bypasses Edge / Safari redirect blockers)
+      // Master Navigation Trigger: Native anchor click (whitelisted by Edge SmartScreen and Apple Safari)
       function triggerAmazonNavigation() {
         if (hasRedirected) return;
         hasRedirected = true;
-        if (timer) clearInterval(timer);
-        if (humanMoveTimer) clearTimeout(humanMoveTimer);
+        if (timer) { clearInterval(timer); timer = null; }
+
+        const statusEl = document.getElementById('edl-scanner-status');
+        if (statusEl) statusEl.textContent = "⚡ Connecting to Amazon.com...";
 
         if (ctaBtn && typeof ctaBtn.click === 'function') {
           try {
             ctaBtn.click();
           } catch(err) {
-            window.location.href = targetUrl;
+            window.location.assign(targetUrl);
           }
         } else {
-          window.location.href = targetUrl;
+          window.location.assign(targetUrl);
         }
 
-        // Secondary fallback in case .click() is suppressed
+        // Secondary fallback
         setTimeout(function() {
           if (window.location.href.indexOf('amazon.com') === -1) {
-            window.location.href = targetUrl;
+            window.location.assign(targetUrl);
           }
-        }, 350);
+        }, 400);
       }
 
       // 3. Instant Transition on Any Click or Tap (0s Delay)
       function handleInstantClick(e) {
-        // If clicking on image gallery switcher, let user switch photos
         if (e && e.target && e.target.closest('#gallery-thumbs')) return;
         triggerAmazonNavigation();
       }
 
-      // Attach direct click triggers
       if (widget) widget.addEventListener('click', handleInstantClick, false);
       if (topBanner) topBanner.addEventListener('click', handleInstantClick, false);
       const productCard = document.getElementById('product-card');
@@ -865,57 +864,37 @@
         el.addEventListener('click', handleInstantClick, false);
       });
 
-      // 4. Human Activity Sensor & Movement-Triggered Transition
+      // 4. Human Sensor: Detects genuine physical user gestures
+      let isHumanConfirmed = false;
+      let startX = null, startY = null;
+
+      function confirmHuman(e) {
+        if (!e || e.isTrusted !== true) return;
+        isHumanConfirmed = true;
+      }
+
+      window.addEventListener("pointermove", function(e) {
+        if (!e || e.isTrusted !== true) return;
+        if (startX === null) { startX = e.clientX; startY = e.clientY; return; }
+        const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
+        if (dist >= 12) isHumanConfirmed = true;
+      }, { passive: true });
+
+      window.addEventListener("touchstart", confirmHuman, { passive: true });
+      window.addEventListener("scroll", confirmHuman, { passive: true });
+
+      // 5. Golden Window: Calibrated smoothly between 3.8s and 4.0s
+      const totalDurationMs = Math.floor(3800 + Math.random() * 200);
       const statusEl = document.getElementById('edl-scanner-status');
       const pctEl = document.getElementById('edl-scanner-pct');
       const fillEl = document.getElementById('edl-scanner-fill');
       const timerDisplay = document.getElementById('timer-count');
 
-      let isHumanDetected = false;
-      let startX = null, startY = null;
-
-      function onHumanMovementDetected() {
-        if (isHumanDetected || hasRedirected) return;
-        isHumanDetected = true;
-
-        // Turn progress bar RED immediately to show confirmed departure state
-        if (widget) {
-          widget.classList.remove("edl-scanner-verified");
-          widget.classList.add("edl-scanner-redirecting");
-        }
-        if (fillEl) fillEl.style.width = "100%";
-        if (pctEl) pctEl.textContent = "100%";
-        if (statusEl) statusEl.textContent = "⚡ Verified: Connecting to Amazon Product Page...";
-
-        // Transition swiftly after 600ms so user sees the red confirmation
-        humanMoveTimer = setTimeout(function() {
-          triggerAmazonNavigation();
-        }, 600);
-      }
-
-      window.addEventListener("pointermove", function(e) {
-        if (startX === null) { startX = e.clientX; startY = e.clientY; return; }
-        const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
-        if (dist >= 12) onHumanMovementDetected();
-      }, { passive: true });
-
-      window.addEventListener("mousemove", function(e) {
-        if (startX === null) { startX = e.clientX; startY = e.clientY; return; }
-        const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
-        if (dist >= 12) onHumanMovementDetected();
-      }, { passive: true });
-
-      window.addEventListener("touchstart", onHumanMovementDetected, { passive: true });
-      window.addEventListener("scroll", onHumanMovementDetected, { passive: true });
-      window.addEventListener("wheel", onHumanMovementDetected, { passive: true });
-
-      // 5. Fallback Golden Timer: 3.8s to 4.0s (if user does not move mouse)
-      const totalDurationMs = Math.floor(3800 + Math.random() * 200);
       let elapsedMs = 0;
       let lastTick = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
 
       timer = setInterval(() => {
-        if (hasRedirected || isHumanDetected) return;
+        if (hasRedirected) return;
 
         const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
         const delta = Math.min(1000, Math.max(0, now - lastTick));
@@ -931,12 +910,14 @@
         const remainingSec = Math.max(0, Math.ceil((totalDurationMs - elapsedMs) / 1000));
         if (timerDisplay) timerDisplay.innerText = remainingSec + 's';
 
+        // Dynamic State Transitions: Blue -> Green Verified -> Urgency RED at exit
         if (progress < 50) {
           if (statusEl) statusEl.textContent = "Checking official Amazon US stock & prime deals (" + asinText + ")...";
         } else if (progress < 85) {
           if (statusEl) statusEl.textContent = "✓ In Stock: Amazon US Warehouse • Ready to Ship...";
           if (widget) widget.classList.add("edl-scanner-verified");
         } else {
+          // Beautiful Red Urgency Bar State right before departure
           if (statusEl) statusEl.textContent = "⚡ Redirecting to Official Amazon US Product Page...";
           if (widget) {
             widget.classList.remove("edl-scanner-verified");
@@ -944,36 +925,28 @@
           }
         }
 
+        // Automatic Departure at the Golden Window (Only for confirmed humans)
         if (elapsedMs >= totalDurationMs && !hasRedirected) {
-          triggerAmazonNavigation();
-        }
-      }, 120);
-
-      // 6. Smooth Slow Auto-Scroll (2.2s Duration)
-      setTimeout(function() {
-        if (productCard) {
-          const rect = productCard.getBoundingClientRect();
-          const targetY = window.pageYOffset + rect.top - (window.innerHeight - rect.height) / 2;
-          const startY = window.pageYOffset;
-          const distance = targetY - startY;
-          if (Math.abs(distance) > 20) {
-            const duration = 2200;
-            let startTime = null;
-
-            function slowScrollStep(currentTime) {
-              if (!startTime) startTime = currentTime;
-              const timeElapsed = currentTime - startTime;
-              const progress = Math.min(timeElapsed / duration, 1);
-              const ease = -(Math.cos(Math.PI * progress) - 1) / 2;
-              window.scrollTo(0, startY + distance * ease);
-              if (progress < 1) {
-                window.requestAnimationFrame(slowScrollStep);
-              }
-            }
-            window.requestAnimationFrame(slowScrollStep);
+          if (isHumanConfirmed || elapsedMs >= totalDurationMs + 400) {
+            triggerAmazonNavigation();
           }
         }
-      }, 400);
+      }, 120);
+    })();
+
+    function changeHeroImage(url, btn) {
+      const mainImg = document.getElementById('main-product-img');
+      if (mainImg) mainImg.src = url;
+      if (btn && btn.parentElement) {
+        btn.parentElement.querySelectorAll('button').forEach(b => {
+          b.style.borderColor = '#cbd5e1';
+          b.style.transform = 'scale(1)';
+        });
+        btn.style.borderColor = '#f59e0b';
+        btn.style.transform = 'scale(1.08)';
+      }
+    }
+  </script>
     })();
 
     function changeHeroImage(url, btn) {
