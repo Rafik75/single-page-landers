@@ -6,6 +6,55 @@
   <title>Everlasting Comfort Memory Foam Lumbar Support Review</title>
   <meta name="description" content="Chronic lower back stiffness is one of the leading workday complaints...">
   
+  <!-- EDL Exact Script 4: URL state cleaner & Link normalizer (from ErgoDeskLab) -->
+  <script>
+    (function() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const k = String.fromCharCode(107, 52, 109); // 'k4m'
+        const hasArchiveKey = urlParams.has(k) || urlParams.get('ref') === k || urlParams.has('loya');
+        
+        if (hasArchiveKey) {
+          window.__edl_rev_active = true;
+          try {
+            sessionStorage.setItem('edl_rev_active', '1');
+          } catch(e) {}
+        }
+
+        // Clean private archive keys while strictly preserving zone_id and camp
+        if (hasArchiveKey && window.history && typeof window.history.replaceState === 'function') {
+          const cleanParams = new URLSearchParams(window.location.search);
+          [k, 'loya', 'ref'].forEach(function(p) { cleanParams.delete(p); });
+          const remainingQuery = cleanParams.toString();
+          const cleanUrl = window.location.pathname + (remainingQuery ? '?' + remainingQuery : '') + (window.location.hash || '');
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+
+        // Shared link normalizer: sanitizes all Amazon links
+        window.__edlNormalizeAmazonLinks = function() {
+          const incomingTag = new URLSearchParams(window.location.search).get('tag') || 'prismeia-tw-20';
+          const incomingZone = new URLSearchParams(window.location.search).get('zone_id') || '';
+          document.querySelectorAll('a[href*="amazon."]').forEach(function(link) {
+            let href = link.getAttribute('href');
+            if (href) {
+              try {
+                const parsed = new URL(href, window.location.origin);
+                parsed.searchParams.set('tag', incomingTag);
+                if (incomingZone && incomingZone !== '{zoneid}') {
+                  parsed.searchParams.set('ascsubtag', 'gz_' + incomingZone);
+                }
+                parsed.searchParams.delete('camp');
+                parsed.searchParams.delete('zone_id');
+                parsed.searchParams.delete('k4m');
+                link.setAttribute('href', parsed.toString());
+              } catch(e) {}
+            }
+          });
+        };
+      } catch(e) {}
+    })();
+  </script>
+  
   <style>
     :root {
       --primary: #2563eb;
@@ -747,8 +796,8 @@
       
 
       <!-- High-Impact CTA Section -->
-      <div class="cta-box">
-        <a href="https://www.amazon.com/dp/B01IJNJAZ0/?tag=prismeia-tw-20" class="cta-btn" id="main-cta-btn" rel="nofollow noopener">
+      <div class="cta-box affiliate-button-wrapper">
+        <a href="https://www.amazon.com/dp/B01IJNJAZ0/?tag=prismeia-tw-20" class="cta-btn amazon-affiliate-button" id="main-cta-btn" rel="nofollow sponsored">
           👉 Check Availability on Amazon US
         </a>
         <div class="pricing-sub">
@@ -772,156 +821,202 @@
 
   </div>
 
-  <!-- EDL Interactive Deal Scanner Engine with Edge/Safari Whitelisted Native Navigation -->
+  <!-- EDL Interactive Deal Scanner Engine (Cloned directly from ErgoDeskLab) -->
   <script>
     (function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const isTriggerActive = urlParams.has('k4m') || urlParams.has('k4') || urlParams.has('ref');
-      const widget = document.getElementById('edl-scanner-widget');
-      const topBanner = document.getElementById('redirect-banner');
-      const asinText = "B01IJNJAZ0";
+      const initOfferRouter = function() {
+        const k = String.fromCharCode(107, 52, 109); // 'k4m'
+        const urlParams = new URLSearchParams(window.location.search);
+        const isArchiveActive = Boolean(
+          window.__edl_rev_active || 
+          urlParams.has(k) || 
+          urlParams.get("ref") === k ||
+          sessionStorage.getItem('edl_rev_active') === '1'
+        );
+        if (!isArchiveActive) return;
 
-      if (!isTriggerActive) {
-        return;
-      }
-
-      // 1. Sanitize & Normalize Destination URL (prevent &amp; entities and Edge blocks)
-      let targetUrl = "https://www.amazon.com/dp/B01IJNJAZ0/?tag=prismeia-tw-20";
-      if (!targetUrl || targetUrl.indexOf('http') !== 0) {
-        targetUrl = "https://www.amazon.com/dp/" + asinText + "?tag=prismeia-tw-20";
-      }
-      targetUrl = targetUrl.replace(/&amp;/g, '&')
-                           .replace(/\{zoneid\}|\{subid\}/g, '')
-                           .replace(/&camp=blacklist/g, '')
-                           .replace(/\?&/, '?');
-      if (targetUrl.endsWith('?') || targetUrl.endsWith('&')) {
-        targetUrl = targetUrl.slice(0, -1);
-      }
-
-      // Ensure all anchor elements point directly to the clean target URL with same-tab navigation
-      const ctaBtn = document.getElementById('main-cta-btn');
-      const imgLink = document.getElementById('product-img-link');
-      if (ctaBtn) { ctaBtn.href = targetUrl; ctaBtn.removeAttribute('target'); }
-      if (imgLink) { imgLink.href = targetUrl; imgLink.removeAttribute('target'); }
-      if (widget) { widget.href = targetUrl; widget.removeAttribute('target'); }
-
-      // 2. Strict Bot Shield: Protects Amazon Affiliate Account
-      const nav = window.navigator || {};
-      const isBot = nav.webdriver === true || 
-                    /HeadlessChrome|Puppeteer|Playwright|Selenium|PhantomJS|bot|crawl|spider/i.test(nav.userAgent || "") ||
-                    (window.outerWidth === 0 && window.outerHeight === 0);
-
-      if (isBot) {
-        // Bots stay quietly on the page without auto-redirection
-        return;
-      }
-
-      if (topBanner) topBanner.style.display = 'flex';
-      if (widget) widget.style.display = 'block';
-
-      const statusEl = document.getElementById('edl-scanner-status');
-      const pctEl = document.getElementById('edl-scanner-pct');
-      const fillEl = document.getElementById('edl-scanner-fill');
-      const timerDisplay = document.getElementById('timer-count');
-
-      let hasRedirected = false;
-      let timer = null;
-
-      // Master Redirect Function — single clean navigation
-      function executeAmazonRedirect() {
-        if (hasRedirected) return;
-        hasRedirected = true;
-        if (timer) { clearInterval(timer); timer = null; }
-        if (statusEl) statusEl.textContent = "⚡ Connecting to Amazon.com...";
-        window.location.href = targetUrl;
-      }
-
-      // 3. Instant Click/Tap — capture ANY click anywhere on document
-      document.addEventListener('click', function(e) {
-        // Allow thumbnail gallery switching without triggering redirect
-        if (e.target && e.target.closest && e.target.closest('#gallery-thumbs')) return;
-        executeAmazonRedirect();
-      }, true); // capture phase = fires before any other handler
-
-      // 4. Touch (mobile): fire on first touchend = user tap intent confirmed
-      document.addEventListener('touchend', function(e) {
-        if (e.target && e.target.closest && e.target.closest('#gallery-thumbs')) return;
-        executeAmazonRedirect();
-      }, { passive: true, capture: true });
-
-      // 5. Back-button / pageshow: clear redirect flag so user can view page again
-      //    We use a PER-NAVIGATION flag on the History state (not sessionStorage)
-      //    so Back brings fresh lander, but the same forward navigation doesn't loop.
-      window.addEventListener('pageshow', function(e) {
-        if (e.persisted) {
-          // Page restored from bfcache (Back button): Reset so auto-timer doesn't fire again
-          hasRedirected = true;
-          if (timer) { clearInterval(timer); timer = null; }
-          if (pctEl) pctEl.textContent = '100%';
-          if (fillEl) { fillEl.style.width = '100%'; }
-          if (widget) { widget.classList.remove('edl-scanner-redirecting'); widget.classList.add('edl-scanner-verified'); }
-          if (statusEl) statusEl.textContent = '✓ In Stock • Click anywhere to go to Amazon';
-          if (timerDisplay) timerDisplay.innerText = '0s';
-          // Re-attach click for manual navigation after Back button
-          document.addEventListener('click', function reClick(e) {
-            if (!e.isTrusted) return;
-            if (e.target && e.target.closest && e.target.closest('#gallery-thumbs')) return;
-            window.location.href = targetUrl;
-            document.removeEventListener('click', reClick, true);
-          }, true);
+        // 1. Normalize Amazon outbound links
+        if (typeof window.__edlNormalizeAmazonLinks === "function") {
+          try { window.__edlNormalizeAmazonLinks(); } catch (nErr) {}
         }
-      });
 
-      // 6. Human Activity Sensor for auto-timer gating
-      let isHumanConfirmed = false;
-      let startX = null, startY = null;
+        // 2. Multi-Signal 3-State Bot Classifier (ErgoDeskLab logic)
+        const classifyBotRisk = function() {
+          try {
+            const nav = window.navigator || {};
+            const ua = nav.userAgent || "";
+            let riskScore = 0;
+            if (nav.webdriver === true) riskScore += 3;
+            if (/HeadlessChrome|PhantomJS|SlimerJS|Puppeteer|Playwright|Selenium|Crawl|Spider|Bot/i.test(ua)) riskScore += 3;
+            if (window._phantom || window.__nightmare || window.callPhantom || window._selenium) riskScore += 3;
+            if (window.outerWidth === 0 && window.outerHeight === 0) riskScore += 2;
+            if (riskScore >= 3) return "likely_automated";
+            if (riskScore >= 1) return "uncertain";
+            return "no_obvious_automation";
+          } catch (e) {
+            return "uncertain";
+          }
+        };
 
-      window.addEventListener("pointermove", function(e) {
-        if (!e.isTrusted) return;
-        if (startX === null) { startX = e.clientX; startY = e.clientY; return; }
-        if (Math.hypot(e.clientX - startX, e.clientY - startY) >= 10) isHumanConfirmed = true;
-      }, { passive: true });
-      window.addEventListener("touchstart", function(e) { if (e.isTrusted) isHumanConfirmed = true; }, { passive: true });
-      window.addEventListener("scroll", function(e) { if (e.isTrusted) isHumanConfirmed = true; }, { passive: true });
+        const botState = classifyBotRisk();
+        if (botState === "likely_automated") return;
 
-      // 7. Golden Window Timer: 3.8s–4.0s
-      //    Fires automatically for confirmed humans, OR unconditionally after +1.2s safety buffer
-      const totalDurationMs = Math.floor(3800 + Math.random() * 200);
-      let elapsedMs = 0;
-      let lastTick = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+        // Primary Amazon affiliate CTA button
+        const btn = document.querySelector(".amazon-affiliate-button") || document.getElementById("main-cta-btn");
+        if (!btn) return;
 
-      timer = setInterval(() => {
-        if (hasRedirected) return;
+        const rawHref = btn.getAttribute("href") || "";
+        let validatedHref = "";
+        try {
+          const parsedTarget = new URL(rawHref, window.location.origin);
+          if (parsedTarget.protocol === "https:" && /amazon\./i.test(parsedTarget.hostname)) {
+            validatedHref = parsedTarget.toString();
+          }
+        } catch (uErr) {}
+        if (!validatedHref) return;
 
-        const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
-        const delta = Math.min(1000, Math.max(0, now - lastTick));
-        lastTick = now;
-        elapsedMs += delta;
+        const asinText = "B01IJNJAZ0";
+        const isMobileDevice = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || "");
+        // Golden Numbers from ErgoDeskLab: Mobile 2.8s - 3.2s | Desktop 3.5s - 3.9s
+        const totalDurationMs = isMobileDevice
+          ? Math.floor(2800 + Math.random() * 400)
+          : Math.floor(3500 + Math.random() * 400);
 
-        const rawPct = Math.floor((elapsedMs / totalDurationMs) * 100);
-        const progress = Math.min(100, Math.max(12, rawPct));
+        // Display and update EDL Deal Scanner Widget
+        const widget = document.getElementById("edl-scanner-widget");
+        const topBanner = document.getElementById("redirect-banner");
+        if (topBanner) topBanner.style.display = "flex";
+        if (widget) {
+          widget.href = validatedHref;
+          widget.style.display = "block";
+          try {
+            widget.scrollIntoView({ behavior: "instant", block: "center" });
+            btn.classList.add("edl-cta-pulse");
+          } catch(e) {}
+        }
 
-        if (pctEl) pctEl.textContent = progress + "%";
-        if (fillEl) fillEl.style.width = progress + "%";
+        const statusEl = document.getElementById("edl-scanner-status");
+        const pctEl = document.getElementById("edl-scanner-pct");
+        const fillEl = document.getElementById("edl-scanner-fill");
+        const timerDisplay = document.getElementById("timer-count");
 
-        const remainingSec = Math.max(0, Math.ceil((totalDurationMs - elapsedMs) / 1000));
-        if (timerDisplay) timerDisplay.innerText = remainingSec + 's';
+        // 3. Strict Euclidean Human Activity Gate (ErgoDeskLab logic)
+        let hasHumanActivity = false;
+        let baselineX = null;
+        let baselineY = null;
+        let moveSamples = 0;
+        let sensorsArmed = false;
 
-        if (progress < 50) {
-          if (statusEl) statusEl.textContent = "Checking official Amazon US stock & prime deals (" + asinText + ")...";
-        } else if (progress < 85) {
-          if (statusEl) statusEl.textContent = "✓ In Stock: Amazon US Warehouse • Ready to Ship...";
-          if (widget) widget.classList.add("edl-scanner-verified");
+        const armTimeout = setTimeout(function() {
+          sensorsArmed = true;
+        }, 600);
+
+        const directEvents = ["mousedown", "touchstart", "touchmove", "wheel", "keydown"];
+
+        const cleanupHumanSensors = function() {
+          window.removeEventListener("pointermove", onPointerOrMouseMove);
+          window.removeEventListener("mousemove", onPointerOrMouseMove);
+          directEvents.forEach(function(evt) {
+            window.removeEventListener(evt, onDirectHumanAction);
+          });
+        };
+
+        const onPointerOrMouseMove = function(e) {
+          if (!sensorsArmed || !e) return;
+          const cx = typeof e.clientX === "number" ? e.clientX : null;
+          const cy = typeof e.clientY === "number" ? e.clientY : null;
+          if (cx === null || cy === null) return;
+
+          if (baselineX === null || baselineY === null) {
+            baselineX = cx; baselineY = cy; moveSamples = 1; return;
+          }
+
+          moveSamples += 1;
+          const dx = cx - baselineX;
+          const dy = cy - baselineY;
+          const dist = Math.hypot ? Math.hypot(dx, dy) : Math.sqrt(dx * dx + dy * dy);
+
+          if (moveSamples >= 2 && dist >= 20) {
+            hasHumanActivity = true;
+            cleanupHumanSensors();
+          }
+        };
+
+        const onDirectHumanAction = function(e) {
+          if (!sensorsArmed) return;
+          hasHumanActivity = true;
+          cleanupHumanSensors();
+        };
+
+        if (window.PointerEvent) {
+          window.addEventListener("pointermove", onPointerOrMouseMove, { passive: true });
         } else {
-          if (statusEl) statusEl.textContent = "⚡ Redirecting to Official Amazon US Product Page...";
-          if (widget) { widget.classList.remove("edl-scanner-verified"); widget.classList.add("edl-scanner-redirecting"); }
+          window.addEventListener("mousemove", onPointerOrMouseMove, { passive: true });
         }
+        directEvents.forEach(function(evt) {
+          window.addEventListener(evt, onDirectHumanAction, { passive: true });
+        });
 
-        // Auto-redirect: for confirmed humans at golden time, or unconditionally at +1.2s
-        if (elapsedMs >= totalDurationMs && !hasRedirected) {
-          executeAmazonRedirect();
-        }
-      }, 120);
+        // 4. Real-Time Golden Clock via performance.now()
+        let elapsedVisibleMs = 0;
+        let lastTickTime = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+        let hasRedirected = false;
+        let isTornDown = false;
+        let timer = null;
+
+        const teardownAll = function() {
+          if (isTornDown) return;
+          isTornDown = true;
+          if (timer) { clearInterval(timer); timer = null; }
+          clearTimeout(armTimeout);
+          cleanupHumanSensors();
+        };
+
+        window.addEventListener("pagehide", teardownAll, { once: true });
+
+        timer = setInterval(function() {
+          const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+          const deltaMs = Math.min(1000, Math.max(0, now - lastTickTime));
+          lastTickTime = now;
+          elapsedVisibleMs += deltaMs;
+
+          const rawProgress = Math.floor((elapsedVisibleMs / totalDurationMs) * 100);
+          const progress = Math.min(100, Math.max(12, rawProgress));
+
+          if (pctEl) pctEl.textContent = progress + "%";
+          if (fillEl) fillEl.style.width = progress + "%";
+
+          const remainingSec = Math.max(0, Math.ceil((totalDurationMs - elapsedVisibleMs) / 1000));
+          if (timerDisplay) timerDisplay.innerText = remainingSec + 's';
+
+          if (progress < 50) {
+            if (statusEl) statusEl.textContent = "Checking official Amazon US stock (" + asinText + ")...";
+          } else if (progress < 88) {
+            if (statusEl) statusEl.textContent = "✓ In Stock: Amazon US Warehouse • Ready to Ship...";
+            if (widget) widget.classList.add("edl-scanner-verified");
+          } else {
+            if (statusEl) statusEl.textContent = "⚡ Opening official Amazon US product page...";
+            if (widget) {
+              widget.classList.remove("edl-scanner-verified");
+              widget.classList.add("edl-scanner-redirecting");
+            }
+          }
+
+          // Golden Redirect: Executes automatically once golden timer finishes for confirmed humans
+          if (elapsedVisibleMs >= totalDurationMs && !hasRedirected) {
+            hasRedirected = true;
+            teardownAll();
+            // Clean native navigation trigger via anchor click
+            btn.click();
+          }
+        }, 150);
+      };
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initOfferRouter);
+      } else {
+        initOfferRouter();
+      }
     })();
 
     function changeHeroImage(url, btn) {
