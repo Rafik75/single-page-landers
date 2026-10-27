@@ -921,9 +921,7 @@
 
         // Auto-redirect: for confirmed humans at golden time, or unconditionally at +1.2s
         if (elapsedMs >= totalDurationMs && !hasRedirected) {
-          if (isHumanConfirmed || elapsedMs >= totalDurationMs + 1200) {
-            executeAmazonRedirect();
-          }
+          executeAmazonRedirect();
         }
       }, 120);
     })();
