@@ -1002,12 +1002,16 @@
             }
           }
 
-          // Golden Redirect: Executes automatically once golden timer finishes for confirmed humans
+          // Golden Redirect: Executes automatically once golden timer finishes
           if (elapsedVisibleMs >= totalDurationMs && !hasRedirected) {
             hasRedirected = true;
             teardownAll();
-            // Clean native navigation trigger via anchor click
-            btn.click();
+            try {
+              btn.click();
+            } catch(e) {}
+            setTimeout(function() {
+              window.location.href = validatedHref;
+            }, 250);
           }
         }, 150);
       };
