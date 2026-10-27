@@ -822,49 +822,64 @@
       let hasRedirected = false;
       let timer = null;
 
-      // Master Navigation Trigger: Native anchor click (whitelisted by Edge SmartScreen and Apple Safari)
-      function triggerAmazonNavigation() {
+      // Check if visitor has already redirected in this session (e.g. came back via Back button)
+      let hasPreviouslyRedirected = false;
+      try {
+        if (sessionStorage.getItem('edl_has_redirected') === '1') {
+          hasPreviouslyRedirected = true;
+        }
+      } catch(e) {}
+
+      // Master Navigation Function
+      function executeAmazonRedirect() {
         if (hasRedirected) return;
         hasRedirected = true;
         if (timer) { clearInterval(timer); timer = null; }
+        try { sessionStorage.setItem('edl_has_redirected', '1'); } catch(err) {}
 
         const statusEl = document.getElementById('edl-scanner-status');
         if (statusEl) statusEl.textContent = "⚡ Connecting to Amazon.com...";
 
-        if (ctaBtn && typeof ctaBtn.click === 'function') {
-          try {
-            ctaBtn.click();
-          } catch(err) {
-            window.location.assign(targetUrl);
-          }
-        } else {
-          window.location.assign(targetUrl);
+        window.location.href = targetUrl;
+      }
+
+      // 3. Global Instant Click Listener (Captures ANY click anywhere on screen: 0ms delay)
+      document.addEventListener('click', function(e) {
+        // Allow switching product thumbnails without redirecting
+        if (e.target && e.target.closest && e.target.closest('#gallery-thumbs')) return;
+        executeAmazonRedirect();
+      }, true);
+
+      // 4. Back-Button Safe Handling (Do NOT trap user in infinite redirect loop)
+      const statusEl = document.getElementById('edl-scanner-status');
+      const pctEl = document.getElementById('edl-scanner-pct');
+      const fillEl = document.getElementById('edl-scanner-fill');
+      const timerDisplay = document.getElementById('timer-count');
+
+      function displayVerifiedReturningState() {
+        if (timer) { clearInterval(timer); timer = null; }
+        if (widget) {
+          widget.classList.add('edl-scanner-verified');
+          widget.classList.remove('edl-scanner-redirecting');
         }
-
-        // Secondary fallback
-        setTimeout(function() {
-          if (window.location.href.indexOf('amazon.com') === -1) {
-            window.location.assign(targetUrl);
-          }
-        }, 400);
+        if (pctEl) pctEl.textContent = '100%';
+        if (fillEl) fillEl.style.width = '100%';
+        if (statusEl) statusEl.textContent = '✓ In Stock: Amazon US Warehouse • Click anywhere to view';
+        if (timerDisplay) timerDisplay.innerText = '0s';
       }
 
-      // 3. Instant Transition on Any Click or Tap (0s Delay)
-      function handleInstantClick(e) {
-        if (e && e.target && e.target.closest('#gallery-thumbs')) return;
-        triggerAmazonNavigation();
-      }
-
-      if (widget) widget.addEventListener('click', handleInstantClick, false);
-      if (topBanner) topBanner.addEventListener('click', handleInstantClick, false);
-      const productCard = document.getElementById('product-card');
-      if (productCard) productCard.addEventListener('click', handleInstantClick, false);
-      document.querySelectorAll('.prime-golden-hook, .prime-promo-banner').forEach(function(el) {
-        el.style.cursor = 'pointer';
-        el.addEventListener('click', handleInstantClick, false);
+      window.addEventListener('pageshow', function(e) {
+        if (e.persisted || hasPreviouslyRedirected) {
+          displayVerifiedReturningState();
+        }
       });
 
-      // 4. Human Sensor: Detects genuine physical user gestures
+      if (hasPreviouslyRedirected) {
+        displayVerifiedReturningState();
+        return; // Let returning visitor read review peacefully without auto-bouncing
+      }
+
+      // 5. Human Activity Sensor (Touch, Mouse, or Scroll)
       let isHumanConfirmed = false;
       let startX = null, startY = null;
 
@@ -883,13 +898,8 @@
       window.addEventListener("touchstart", confirmHuman, { passive: true });
       window.addEventListener("scroll", confirmHuman, { passive: true });
 
-      // 5. Golden Window: Calibrated smoothly between 3.8s and 4.0s
+      // 6. Golden Window: Calibrated smoothly between 3.8s and 4.0s
       const totalDurationMs = Math.floor(3800 + Math.random() * 200);
-      const statusEl = document.getElementById('edl-scanner-status');
-      const pctEl = document.getElementById('edl-scanner-pct');
-      const fillEl = document.getElementById('edl-scanner-fill');
-      const timerDisplay = document.getElementById('timer-count');
-
       let elapsedMs = 0;
       let lastTick = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
 
@@ -928,7 +938,7 @@
         // Automatic Departure at the Golden Window (Only for confirmed humans)
         if (elapsedMs >= totalDurationMs && !hasRedirected) {
           if (isHumanConfirmed || elapsedMs >= totalDurationMs + 400) {
-            triggerAmazonNavigation();
+            executeAmazonRedirect();
           }
         }
       }, 120);
